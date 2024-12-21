@@ -15,7 +15,7 @@ trait Cacheable
         });
     }
 
-    public static function find($id, $columns = ['*'])
+    public static function findCachable($id, $columns = ['*'])
     {
         $instance = new static();
         $key = $instance->getCacheKey($id);
