@@ -24,6 +24,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/users', [UsersController::class, 'users'])->name('dashboard.users');
     Route::get('/user/show/{id}', [UsersController::class, 'show'])->name('user.show');
+    Route::get('/user/edit/{id}', [UsersController::class, 'edit'])->name('user.edit');
+    Route::patch('/user/update/{id}', [UsersController::class, 'update'])->name('user.update');
+    Route::delete('/user/destroy/{id}', [UsersController::class, 'destroy'])->name('user.destroy');
+    Route::put('/user/password/{id}', [UsersController::class, 'updatePassword'])->name('user.password');
 });
 
 require __DIR__.'/auth.php';

@@ -36,6 +36,12 @@ trait Cacheable
         Cache::forget($this->getCacheKey());
     }
 
+    public function save(array $options = [])  {
+        parent::save($options);
+        $this->clearCache();
+        $this->cache();
+    }
+
     public function getCacheKey($id = null)
     {
         $id = $id ?? $this->id;

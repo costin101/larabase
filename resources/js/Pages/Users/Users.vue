@@ -38,8 +38,14 @@ defineProps({
                             <td class="border px-4 py-2">{{ user.name }}</td>
                             <td class="border px-4 py-2">{{ user.email }}</td>
                             <td class="border px-4 py-2">
-                                <Link :href="route('user.show', user.id)">
-                                    <span>show</span>
+                                <Link 
+                                :href="route('user.show', user.id)"
+                                >
+                                    <span class="px-2">show</span>
+                                </Link>
+                                <Link 
+                                :href="route('user.edit', user.id)">
+                                    <span class="px-2">edit</span>
                                 </Link>
                             </td>
                         </tr>
