@@ -26,7 +26,7 @@ class UsersController extends Controller
 
     public function show($id): Response
     {
-        $user = User::findCachable($id);
+        $user = User::findCacheable($id);
         return Inertia::render('User/User',[
             'user' => $user
         ]);
@@ -34,7 +34,7 @@ class UsersController extends Controller
 
     public function edit($id): Response
     {
-        $user = User::findCachable($id);
+        $user = User::findCacheable($id);
         return Inertia::render('User/EditUser',[
             'user' => $user
         ]);
@@ -45,7 +45,7 @@ class UsersController extends Controller
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
-        $user = User::findCachable($id);
+        $user = User::findCacheable($id);
         $user->update([
             'password' => Hash::make($validData['password']),
         ]);
@@ -56,7 +56,7 @@ class UsersController extends Controller
     public function update($id, UserProfileUpdateRequest $request): RedirectResponse
     {
         $validData = $request->validated();
-        $user = User::findCachable($id);
+        $user = User::findCacheable($id);
 
         $user->name = $request->input('name');
         $user->email = $request->input('email');
