@@ -23,7 +23,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'first_name', 'last_name', 'email', 'password', 'phone_number',
+        'first_name', 'last_name', 'username', 'email', 'password', 'phone_number',
         'about', 'gender', 'birthday', 'country_id', 'lat', 'lng',
         'last_location_update', 'share_my_location', 'website', 'facebook',
         'google', 'x', 'linkedin', 'youtube', 'instagram', 'discord',
@@ -122,5 +122,10 @@ class User extends Authenticatable
     public function referrerUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'ref_user_id');
+    }
+
+    public function country()
+    {
+        return $this->hasOne(Country::class, 'id', 'country_id');
     }
 }

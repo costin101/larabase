@@ -1,5 +1,7 @@
 <?php namespace App\Actions\User;
 
+use App\Models\Country;
+
 class CreateUserAction
 {
     public function execute(array $data)
@@ -9,9 +11,10 @@ class CreateUserAction
             $user = \App\Models\User::create([
                 'first_name' => $data['first_name'],
                 'last_name' => $data['last_name'],
+                'username' => $data['username'],
                 'email' => $data['email'],
                 'password' => \Illuminate\Support\Facades\Hash::make($data['password']),
-                'country' => $data['country'],
+                'country_id' => $data['country'],
                 'birthday' => $data['birthday'],
                 'phone_number' => $data['phone_number'],
             ]);

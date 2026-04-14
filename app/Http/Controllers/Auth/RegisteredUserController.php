@@ -22,7 +22,9 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Auth/Register');
+        return Inertia::render('Auth/Register',[
+            'countries' => \App\Models\Country::all(['id', 'name', 'iso_alpha2','phone_prefix']),
+        ]);
     }
 
     /**
@@ -40,6 +42,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('home', absolute: false));
     }
 }

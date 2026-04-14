@@ -16,7 +16,6 @@ class HomeController extends Controller
             if($isAdmin){
                 return Inertia::render('Dashboard');
             } else {
-                $user->assignRole('admin');
                 return Inertia::render('Home');
             }
         }
