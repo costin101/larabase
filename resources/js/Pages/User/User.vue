@@ -25,12 +25,12 @@ const formatDateTime = (dateString) => {
 
 <template>
 
-    <Head :title="user.name" />
+    <Head :title="user.username" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                Show User {{ user.name }}
+                Show User {{ user.username }}
             </h2>
             <Link :href="route('user.edit', user.id)">
             <span class="text-white">Edit</span>
@@ -41,7 +41,7 @@ const formatDateTime = (dateString) => {
             <div class="pt-6 pb-3 text-white">
                 <div class="mx-auto max-w-7xl space-y-1 sm:px-6 lg:px-8">
                     <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
-                        Name: {{ user.name }}
+                        Name: {{ user.first_name }} {{ user.last_name }}
                     </div>
                 </div>
             </div>

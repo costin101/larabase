@@ -11,15 +11,16 @@ class RolesAndPermissionsSeeder extends Seeder
     public function run(): void
     {
         $admin  = Role::create(['name' => 'admin']);
-        $editor = Role::create(['name' => 'editor']);
 
-        $permissions = ['create-post', 'edit-post', 'delete-post', 'view-post'];
+        $permissions = ['create-post', 'edit-post', 'delete-post', 'view-post', 
+            'create-user', 'edit-user', 'delete-user', 'view-user', 
+            'create-role', 'edit-role', 'delete-role', 'view-role'
+        ];
 
         foreach ($permissions as $perm) {
             Permission::create(['name' => $perm]);
         }
 
         $admin->syncPermissions($permissions);
-        $editor->syncPermissions(['create-post', 'edit-post', 'view-post']);
     }
 }

@@ -80,15 +80,25 @@ trait Cacheable
         $ttl    = $this->cacheableTtl();
         $fields = $this->cacheableFields();
 
-        Redis::pipeline(function ($pipe) use ($prefix, $fields, $ttl) {
-            $pipe->setex("{$prefix}:__cached__", $ttl, '1');
-
+        if ($ttl < 0) {
+            // Negative TTL means "cache indefinitely" — use set instead of setex
+            Redis::set("{$prefix}:__cached__", '1');
             foreach ($fields as $field) {
-                $value  = $this->getAttribute($field);
+                $value = $this->{$field};
                 $stored = $value === null ? '__NULL__' : (string) $value;
-                $pipe->setex("{$prefix}:{$field}", $ttl, $stored);
+                Redis::set("{$prefix}:{$field}", $stored);
             }
-        });
+        } else {
+            // Use a pipeline to minimize round-trips
+            Redis::pipeline(function ($pipe) use ($prefix, $fields, $ttl) {
+                $pipe->setex("{$prefix}:__cached__", $ttl, '1');
+                foreach ($fields as $field) {
+                    $value = $this->{$field};
+                    $stored = $value === null ? '__NULL__' : (string) $value;
+                    $pipe->setex("{$prefix}:{$field}", $ttl, $stored);
+                }
+            });
+        }
 
         $this->cacheRelations($ttl);
     }
@@ -107,12 +117,22 @@ trait Cacheable
         $prefix = $this->getCachePrefix();
         $ttl    = $this->cacheableTtl();
 
-        Redis::pipeline(function ($pipe) use ($prefix, $dirty, $ttl) {
-            foreach ($dirty as $field => $value) {
-                $stored = $value === null ? '__NULL__' : (string) $value;
-                $pipe->setex("{$prefix}:{$field}", $ttl, $stored);
-            }
-        });
+        if ($ttl < 0) {
+            // Negative TTL means "cache indefinitely"
+            Redis::pipeline(function ($pipe) use ($prefix, $dirty, $ttl) {
+                foreach ($dirty as $field => $value) {
+                    $stored = $value === null ? '__NULL__' : (string) $value;
+                    $pipe->setex("{$prefix}:{$field}", $stored);
+                }
+            });
+        } else {
+            Redis::pipeline(function ($pipe) use ($prefix, $dirty, $ttl) {
+                foreach ($dirty as $field => $value) {
+                    $stored = $value === null ? '__NULL__' : (string) $value;
+                    $pipe->setex("{$prefix}:{$field}", $ttl, $stored);
+                }
+            });
+        }
     }
 
     /**
@@ -172,6 +192,12 @@ trait Cacheable
             $ids = $related instanceof \Illuminate\Database\Eloquent\Model
                 ? [$related->getKey()]
                 : $related->modelKeys();
+
+            if ($ttl < 0) {
+                // Negative TTL means "cache indefinitely" — use set instead of setex
+                Redis::set("{$prefix}:rel:{$relation}", json_encode($ids));
+                continue;
+            }
 
             Redis::setex("{$prefix}:rel:{$relation}", $ttl, json_encode($ids));
         }

@@ -8,19 +8,35 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
+const rtlLanguages = ['ar', 'he', 'fa', 'ur', 'ps', 'ckb'];
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
+
     resolve: (name) =>
         resolvePageComponent(
             `./Pages/${name}.vue`,
-            import.meta.glob('./Pages/**/*.vue'),
+            import.meta.glob('./Pages/**/*.vue') // ✅ correct
         ),
+
     setup({ el, App, props, plugin }) {
-        return createApp({ render: () => h(App, props) })
-            .use(plugin)
-            .use(ZiggyVue)
-            .mount(el);
+        const app = createApp({ render: () => h(App, props) });
+
+        app.use(plugin).use(ZiggyVue);
+
+        // ✅ RTL handling
+        app.mixin({
+            mounted() {
+                const locale = this.$page.props.locale || 'en';
+                document.documentElement.dir = rtlLanguages.includes(locale)
+                    ? 'rtl'
+                    : 'ltr';
+            },
+        });
+
+        return app.mount(el);
     },
+
     progress: {
         color: '#4B5563',
     },
