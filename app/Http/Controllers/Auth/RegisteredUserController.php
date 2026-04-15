@@ -23,7 +23,8 @@ class RegisteredUserController extends Controller
     public function create(): Response
     {
         return Inertia::render('Auth/Register',[
-            'countries' => \App\Models\Country::all(['id', 'name', 'iso_alpha2','phone_prefix']),
+            'countries' => \App\Models\Country::getAllCached(),
+            'genders' => \App\Enums\GenderEnum::getAll(),
         ]);
     }
 
@@ -36,7 +37,7 @@ class RegisteredUserController extends Controller
     {
         $registerUserValidateAction->execute($request);
 
-        $user = $createUserAction->execute($request->all());
+        $user = $createUserAction->execute($request);
 
         event(new Registered($user));
 

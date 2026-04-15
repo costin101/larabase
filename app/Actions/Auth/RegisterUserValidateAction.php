@@ -2,12 +2,14 @@
 
 namespace App\Actions\Auth;
 
+use App\Enums\GenderEnum;
 use App\Models\Country;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 
 class RegisterUserValidateAction
 {
@@ -77,6 +79,7 @@ class RegisterUserValidateAction
                 },
             ],
             'phone_number' => 'required|string|max:14|unique:' . User::class,
+            'gender' => ['required', Rule::in(GenderEnum::getAll())],
         ];
 
         $validator = Validator::make($request->all(), $rules, $this->messages());

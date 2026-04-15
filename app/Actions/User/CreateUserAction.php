@@ -1,12 +1,15 @@
 <?php namespace App\Actions\User;
 
 use App\Models\Country;
+use Illuminate\Http\Request;
 
 class CreateUserAction
 {
-    public function execute(array $data)
+    public function execute(Request $request)
     {
         try {
+            $data = $request->all();
+            
             \DB::beginTransaction();
             $user = \App\Models\User::create([
                 'first_name' => $data['first_name'],
@@ -17,6 +20,11 @@ class CreateUserAction
                 'country_id' => $data['country'],
                 'birthday' => $data['birthday'],
                 'phone_number' => $data['phone_number'],
+                'email_code' => rand(100000, 999999),
+                'sms_code' => rand(100000, 999999),
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'geneder' => $data['gender'],
             ]);
             \DB::commit();
 

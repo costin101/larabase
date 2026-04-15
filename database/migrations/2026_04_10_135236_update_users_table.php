@@ -83,8 +83,8 @@ return new class extends Migration
             $table->string('new_phone')->nullable();
             
             // Account Status & Role
-            $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
-            $table->boolean('active')->default(true);
+            $table->enum('status', ['active', 'inactive', 'suspended'])->default('inactive');
+            $table->boolean('active')->default(false);
             $table->boolean('banned')->default(false);
             $table->string('banned_reason')->nullable();
             

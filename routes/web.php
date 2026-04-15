@@ -10,9 +10,18 @@ use Inertia\Inertia;
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard',[
-        'user' => Auth::user()
-    ]);
+    $user = Auth::user();
+    if($user){
+        if($user->hasRole('admin')){
+            return Inertia::render('Dashboard',[
+                'user' => $user
+            ]);
+        } else {
+            return redirect(route('home', absolute: false));
+        }
+    } else {
+        return redirect(route('login', absolute: false));
+    }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

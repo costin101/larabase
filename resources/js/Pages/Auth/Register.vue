@@ -9,6 +9,7 @@ import { watch } from 'vue';
 
 const props = defineProps({
     countries: Array,
+    genders: Array,
 });
 
 const form = useForm({
@@ -22,6 +23,7 @@ const form = useForm({
     birthday: '',
     phone_prefix: '', // Separated prefix
     phone_body: '',   // Separated body
+    gender: '',
 });
 
 // Watch country to update the prefix automatically
@@ -127,6 +129,22 @@ const submit = () => {
                     <TextInput id="password_confirmation" type="password" class="mt-1 block w-full" v-model="form.password_confirmation" required />
                     <InputError class="mt-2" :message="form.errors.password_confirmation" />
                 </div>
+            </div>
+
+            <div class="mt-4">
+                <InputLabel for="gender" value="Gender" />
+                <select
+                    id="gender"
+                    v-model="form.gender"
+                    class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    required
+                >
+                    <option value="" disabled>Gender</option>
+                    <option v-for="gender in props.genders" :key="gender" :value="gender">
+                        {{ gender }}
+                    </option>
+                </select>
+                <InputError class="mt-2" :message="form.errors.gender" />
             </div>
 
             <div class="mt-4 flex items-center justify-end">

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\Cacheable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Country extends Model
 {
@@ -35,5 +36,19 @@ class Country extends Model
     public function cacheableTtl(): int
     {
         return -1; // Cache indefinitely
+    }
+
+    public static function getAllCached(): \Illuminate\Support\Collection
+    {
+        Cache::rememberForever('countries:all', function () {
+            return self::all();
+        });
+
+        return Cache::get('countries:all');
+    }
+
+    public function clearCache(): void
+    {
+        Cache::forget('countries:all');
     }
 }
