@@ -12,7 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, Cacheable, HasApiTokens, HasRoles;
@@ -65,8 +65,10 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'phone_verified_at' => 'datetime',
             'password' => 'hashed',
             'birthday' => 'date',
+            'birthday_verified' => 'boolean',
             'last_location_update' => 'datetime',
             'share_my_location' => 'boolean',
             'notifications_sound' => 'boolean',
@@ -109,6 +111,17 @@ class User extends Authenticatable
             'lat' => 'decimal:8',
             'lng' => 'decimal:8',
         ];
+    }
+
+    public function cacheableRelations(): array
+    {
+        return ['roles'];
+    }
+
+    public function getCachedHasRole(string|array $roles): bool
+    {
+        $userRoles = $this->getCachedRelation('roles')->pluck('name')->toArray();
+        return in_array($roles, $userRoles);
     }
 
     /**

@@ -25,6 +25,8 @@ class RegisterUserValidateAction
             'username.unique' => __('messages.username_taken'),
             'username.string' => __('messages.username_invalid'),
             'username.max' => __('messages.username_max'),
+            'username.alpha_dash' => __('messages.username_invalid_format'),
+            'username.not_regex' => __('messages.username_cannot_be_email'),
             'email.required' => __('messages.email_required'),
             'email.email' => __('messages.email_invalid'),
             'email.unique' => __('messages.email_taken'),
@@ -53,7 +55,14 @@ class RegisterUserValidateAction
         $rules = [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'username'  => 'required|string|max:255|unique:' . User::class,
+            'username'  => [
+                'required',
+                'string',
+                'alpha_dash', // Allows letters, numbers, dashes, and underscores but NO spaces or @
+                'max:255',
+                'unique:' . User::class,
+                'not_regex:/^.+@.+$/i', // Disallow @ symbol to prevent email-like usernames
+            ],
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Password::defaults()],
             'country' => 'required|int|exists:countries,id', // Ensures country exists in DB

@@ -7,28 +7,18 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/verify-phone', function () {
+    return Inertia::render('Auth/VerifyPhone');
+})->middleware(['auth'])->name('verification.phone');
 
-Route::get('/dashboard', function () {
-    $user = Auth::user();
-    if($user){
-        if($user->hasRole('admin')){
-            return Inertia::render('Dashboard',[
-                'user' => $user
+
+Route::middleware('admin')->group(function () {
+    Route::get('/dashboard', function () {
+        $user = Auth::user();
+        return Inertia::render('Dashboard',[
+                    'user' => $user
             ]);
-        } else {
-            return redirect(route('home', absolute: false));
-        }
-    } else {
-        return redirect(route('login', absolute: false));
-    }
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
+    })->name('dashboard');
     Route::get('/users', [UsersController::class, 'users'])->name('dashboard.users');
     Route::get('/user/show/{id}', [UsersController::class, 'show'])->name('user.show');
     Route::get('/user/edit/{id}', [UsersController::class, 'edit'])->name('user.edit');
@@ -36,5 +26,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/user/destroy/{id}', [UsersController::class, 'destroy'])->name('user.destroy');
     Route::put('/user/password/{id}', [UsersController::class, 'updatePassword'])->name('user.password');
 });
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
 
 require __DIR__.'/auth.php';

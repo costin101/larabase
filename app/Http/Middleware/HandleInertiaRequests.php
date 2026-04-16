@@ -29,11 +29,14 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        $isAdmin = $user ? $user->getCachedHasRole('admin') : false;
         return [
             ...parent::share($request),
             'locale' => app()->getLocale(),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
+                'isAdmin' => $isAdmin,
             ],
         ];
     }

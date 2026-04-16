@@ -11,13 +11,8 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $isAdmin = $user && $user->hasRole('admin');
         if($user){
-            if($isAdmin){
-                return Inertia::render('Dashboard');
-            } else {
-                return Inertia::render('Home');
-            }
+            return Inertia::render('Home');
         }
 
         return Inertia::render('Welcome', [

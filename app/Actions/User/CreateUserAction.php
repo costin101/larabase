@@ -20,8 +20,6 @@ class CreateUserAction
                 'country_id' => $data['country'],
                 'birthday' => $data['birthday'],
                 'phone_number' => $data['phone_number'],
-                'email_code' => rand(100000, 999999),
-                'sms_code' => rand(100000, 999999),
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
                 'geneder' => $data['gender'],
